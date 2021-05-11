@@ -1,0 +1,81 @@
+In [2]:
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+
+Iris_data = pd.read_csv("D:\ProjectData\IrisData.csv")
+Iris_data.head()
+Out[2]:
+Id	SepalLengthCm	SepalWidthCm	PetalLengthCm	PetalWidthCm	Species
+0	1	5.1	3.5	1.4	0.2	Iris-setosa
+1	2	4.9	3.0	1.4	0.2	Iris-setosa
+2	3	4.7	3.2	1.3	0.2	Iris-setosa
+3	4	4.6	3.1	1.5	0.2	Iris-setosa
+4	5	5.0	3.6	1.4	0.2	Iris-setosa
+In [3]:
+Iris_data.Species.unique()
+Out[3]:
+array(['Iris-setosa', 'Iris-versicolor', 'Iris-virginica'], dtype=object)
+In [4]:
+sns.scatterplot(data = Iris_data, x = "SepalLengthCm", y = "PetalWidthCm", hue = Iris_data.Species, palette = "coolwarm_r")
+Out[4]:
+<matplotlib.axes._subplots.AxesSubplot at 0x23067ca94a8>
+
+In [16]:
+from sklearn.cluster import KMeans
+
+X = Iris_data[["SepalLengthCm","PetalWidthCm"]]
+km = KMeans(n_clusters = 3, n_init = 3, init = "random", random_state = 42)
+km.fit(X)
+y_kmeans = km.predict(X)
+y_kmeans
+Out[16]:
+array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 1, 1, 2, 0, 2, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 2,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0,
+       0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0, 2, 0, 2, 2, 0, 2, 2, 2,
+       2, 2, 2, 0, 0, 2, 2, 2, 2, 0, 2, 0, 2, 0, 2, 2, 0, 0, 2, 2, 2, 2,
+       2, 0, 0, 2, 2, 2, 0, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 0])
+In [21]:
+sns.scatterplot(data = Iris_data, x = "SepalLengthCm", y = "PetalWidthCm", hue = y_kmeans, palette = "coolwarm_r")
+centers = km.cluster_centers_
+
+plt.scatter(centers[:, 0], centers[:, 1], c='black', s=200, alpha = 0.6)
+Out[21]:
+<matplotlib.collections.PathCollection at 0x2306dcbd470>
+
+0 : Iris-versicolor 1 : Iris-setosa 2 : Iris-virginica
+
+In [27]:
+km.inertia_
+Out[27]:
+32.76801587301587
+In [28]:
+newdata = [[4.7,0.8]]
+y_pred = km.predict(newdata)
+y_pred
+Out[28]:
+array([1])
+In [29]:
+sns.scatterplot(data = Iris_data, x = "SepalLengthCm", y = "PetalWidthCm")
+Out[29]:
+<matplotlib.axes._subplots.AxesSubplot at 0x2306dd10198>
+
+In [30]:
+intertia = []
+K = range(1,15)
+for k in K:
+    km = KMeans(n_clusters=k)
+    km = km.fit(X)
+    intertia.append(km.inertia_)
+    
+plt.plot(K, intertia, marker= "x")
+plt.xlabel('k')
+plt.xticks(np.arange(15))
+plt.ylabel('Intertia')
+plt.title('Elbow Method')
+plt.show()
+
+In [ ]:
